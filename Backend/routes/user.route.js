@@ -7,11 +7,11 @@ import {
 } from "../controllers/user.controller.js";
 import userAuth from '../middlewares/user.auth.middleware.js';
 
-const userRouter = express.Router();
+const router = express.Router();
 
-userRouter.post('/register',register)
-userRouter.post('/login',login)
-userRouter.post('/logout',logout)
-userRouter.post("/profile/update", userAuth, updateProfile);
+router.post("/register", register);
+router.post("/login", login);
+router.post("/logout", logout);
+router.post("/profile/update", userAuth, updateProfile);
 
-export default userRouter;
+export default router;
