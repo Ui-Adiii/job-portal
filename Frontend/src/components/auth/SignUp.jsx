@@ -12,8 +12,12 @@ import { Button } from "../ui/button";
 import { Label } from "flowbite-react";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useDispatch, useSelector } from "react-redux";
+import {signInStart,signInSuccess,signInFailure} from "../../store/user/userSlice"; 
 
 const SignUp = () => {
+  const {currentUser} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setformData] = useState({
     role: "employee",
@@ -32,14 +36,16 @@ const SignUp = () => {
   };
 
   const handleSubmit = (e) => {
+  
     e.preventDefault();
-    console.log(formData);
-    
+    dispatch(signInSuccess(formData))
+    // console.log(formData);
+    navigate("/");
   };
 
   return (
     <form
-      className="flex justify-center items-center min-h-[100vh]"
+      className="flex justify-center items-center min-h-screen"
       onSubmit={handleSubmit}
     >
       <Card className="w-full  max-w-sm">
@@ -119,7 +125,7 @@ const SignUp = () => {
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className="w-full">
-            Login
+            Register
           </Button>
         </CardFooter>
       </Card>

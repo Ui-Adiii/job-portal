@@ -5,6 +5,8 @@ import { ToastContainer } from 'react-toastify'
 import ScrollToTop from './components/customs/ScrollToTop'
 import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
+import PrivateRoute from './components/customs/PrivateRoute'
+import ForgotPassword from './components/auth/ForgotPassword'
 const App = () => {
   return (
     <BrowserRouter>
@@ -15,6 +17,9 @@ const App = () => {
         <Route path='/' element={<Home/>} />
         <Route path='/sign-in' element={<SignIn/>} />
         <Route path='/sign-up' element={<SignUp/>} />
+        <Route element={<PrivateRoute/>}>
+          <Route path='/change-password' element={<ForgotPassword/>} />
+        </Route>
       </Routes >
     
     </BrowserRouter>
