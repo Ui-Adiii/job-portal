@@ -1,19 +1,19 @@
 import React from 'react'
-import { Button } from './components/ui/button'
-import { useDispatch, useSelector } from 'react-redux'
-import { toggleTheme } from './store/theme/themeSlice'
-
+import { Route,Routes ,BrowserRouter } from 'react-router-dom'
+import Home from './pages/Home'
+import { ToastContainer } from 'react-toastify'
+import ScrollToTop from './components/customs/ScrollToTop'
 const App = () => {
-  const {theme} =useSelector((state)=>state.theme)
-  const dispatch=useDispatch();
-
-  console.log(theme);
   return (
-    <div >
-      <Button
-      onClick={()=>dispatch(toggleTheme())}
-      >Click</Button>
-    </div>
+    <BrowserRouter>
+    <ScrollToTop/>
+      <ToastContainer />
+    
+      <Routes>
+        <Route path='/' element={<Home/>} />
+      </Routes >
+    
+    </BrowserRouter>
   )
 }
 
