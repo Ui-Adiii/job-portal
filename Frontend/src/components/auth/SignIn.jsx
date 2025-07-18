@@ -39,7 +39,7 @@ const SignIn = () => {
 
   return (
     <form
-      className="flex justify-center items-center min-h-[100vh]"
+      className="flex justify-center items-center min-h-screen"
       onSubmit={handleSubmit}
     >
       <Card className="w-full  max-w-sm">
@@ -72,12 +72,12 @@ const SignIn = () => {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
+                  <Link
+                    to={'/change-password'}
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
-                  </a>
+                  </Link>
                 </div>
                 <Input
                   onChange={handleChange}
