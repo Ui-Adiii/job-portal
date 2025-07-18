@@ -22,4 +22,4 @@ const applicationSchema = new Schema(
 );
 
 
-export default Application = model("Application", userSchema);
+export default Application = model("Application", applicationSchema);

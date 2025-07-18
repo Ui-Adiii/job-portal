@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   fullname: {
     type: String,
     required: true,
@@ -17,10 +17,11 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select:false
   },
   role: {
     type: String,
-    enum: ["student", "recruiter"],
+    enum: ["admin", "employee"],
     required: true,
   },
   profile: {
