@@ -177,4 +177,45 @@ const updateProfile = async (req, res) => {
     });
   }
 };
-export { register, login, logout, updateProfile };
+const updatePassword = (req,res)=>{
+  try {
+    const {id} = req.params;
+    const { newPassword } = req.body;
+    if ( !newPassword) {
+      return res.status(400).json({
+        message: "Something is missing",
+        success: false,
+      });
+    }
+    const user = User.findById(id);
+    if (!user) {
+      return res.status(400).json({
+        message: "user not found",
+        success: false,
+      });
+    }
+    const hash = bcrypt.hash(password, 10);
+    user.password = hash;
+    const updatedUser = await User.findByIdAndUpdate(id, { password: hash }, { new: true });
+    const { password, ...rest}= updatedUser._doc;
+    if (!updatedUser) {
+      return res.status(400).json({
+        message: "Failed to update password",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Password updated successfully",
+      success: true,
+      rest,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+      success: false,
+    });
+    
+  }
+}
+export { register, login, logout, updateProfile ,updatePassword};

@@ -7,6 +7,7 @@ import SignIn from './components/auth/SignIn'
 import SignUp from './components/auth/SignUp'
 import PrivateRoute from './components/customs/PrivateRoute'
 import ForgotPassword from './components/auth/ForgotPassword'
+import UpdateProfile from './components/auth/UpdateProfile'
 const App = () => {
   return (
     <BrowserRouter>
@@ -19,6 +20,7 @@ const App = () => {
         <Route path='/sign-up' element={<SignUp/>} />
         <Route element={<PrivateRoute/>}>
           <Route path='/change-password' element={<ForgotPassword/>} />
+          <Route path='/update-profile' element={<UpdateProfile/>} />
         </Route>
       </Routes >
     

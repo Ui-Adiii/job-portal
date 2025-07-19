@@ -13,37 +13,27 @@ import { Label } from "flowbite-react";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../../store/user/userSlice";
 
-const SignUp = () => {
-  const { currentUser } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const UpdateProfile = () => {
+    const { currentUser } = useSelector((state) => state.user);
   const [formData, setformData] = useState({
     role: "employee",
     email: "",
-    fullname: {
-      firstname: "",
-      lastname: "",
-    },
-    phoneNumber: "",
+    fullname:"",
+    phoneNumber:"",
     password: "",
+    profile:{
+        bio:'',
+        skills:[],
+        resume:'',
+        resumeOriginalName:'',
+        company:'',
+        profilePhoto:''
+    }
   });
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    if (id === "firstname" || id === "lastname") {
-      setformData((prev) => ({
-        ...prev,
-        fullname: { ...prev.fullname, [id]: value },
-      }));
-    } else {
-      setformData((prev) => ({ ...prev, [id]: value }));
-    }
+    setformData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
   const handleRoleChange = (value) => {
@@ -51,10 +41,10 @@ const SignUp = () => {
   };
 
   const handleSubmit = (e) => {
+  
     e.preventDefault();
-    dispatch(signInSuccess(formData));
     console.log(formData);
-    // navigate("/");
+    
   };
 
   return (
@@ -62,40 +52,31 @@ const SignUp = () => {
       className="flex justify-center items-center min-h-screen"
       onSubmit={handleSubmit}
     >
-      <Card className="w-full  max-w-sm">
-        <CardHeader>
+      <Card className="w-full  max-w-lg">
+        <CardHeader >
           <CardTitle>Register for your account</CardTitle>
           <CardAction>
             <Link to="/sign-in">
-              <Button variant="link">Sign In</Button>
+              <Button variant="link">Update Profile</Button>
             </Link>
           </CardAction>
         </CardHeader>
         <CardContent>
           <div>
             <div className="flex flex-col gap-6">
-              <div className="grid gap-2 ">
-                <Label htmlFor="firstname">First Name</Label>
-                <Input
-                  onChange={handleChange}
-                  value={formData.fullname.firstname}
-                  id="firstname"
-                  type="name"
-                  placeholder="Aditya"
-                  required
-                />
-                <Label htmlFor="lastname">Last Name</Label>
-                <Input
-                  onChange={handleChange}
-                  value={formData.fullname.lastname}
-                  id="lastname"
-                  type="name"
-                  placeholder="Mallick"
-                  required
-                />
-              </div>
               <div className="grid gap-2">
-                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Label htmlFor="fullname">Full Name</Label>
+                <Input
+                  onChange={handleChange}
+                  value={formData.fullname}
+                  id="fullname"
+                  type="name"
+                  placeholder="Aditya Mallick"
+                  required
+                />
+              </div> 
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Phone Number</Label>
                 <Input
                   onChange={handleChange}
                   value={formData.phoneNumber}
@@ -104,7 +85,7 @@ const SignUp = () => {
                   placeholder="+91-0000000000"
                   required
                 />
-              </div>
+              </div> 
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -156,4 +137,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default UpdateProfile;
