@@ -4,23 +4,26 @@ import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, role } = req.body;
-    if (!fullname || !email || !phoneNumber || !password || !role) {
+    const { firstName,lastName, email, phoneNumber, password, role } = req.body;
+    if (!firstName || !lastName  || !email || !phoneNumber || !password || !role) {
       return res.status(400).json({
         message: "Something is missing",
         success: false,
       });
     }
-    const user = await User.findOne({ email });
-    if (user) {
+    const existedUser = await User.findOne({ email });
+    if (existedUser) {
       return res.status(400).json({
         message: "user already exist",
         success: false,
       });
     }
     const hash = await bcrypt.hash(password, 10);
-    await User.create({
-      fullname,
+    const user = await User.create({
+      fullname:{
+        firstName,
+        lastName,
+      },
       email,
       phoneNumber,
       password: hash,
@@ -29,6 +32,7 @@ const register = async (req, res) => {
     res.status(201).json({
       message: "registered successfully",
       success: true,
+      user,
     });
   } catch (error) {
     return res.status(400).json({
@@ -71,7 +75,7 @@ const login = async (req, res) => {
       });
     }
 
-    const token = await jwt.sign(
+    const token = jwt.sign(
       {
         userId: user._id,
       },
@@ -80,6 +84,8 @@ const login = async (req, res) => {
         expiresIn: "1d",
       }
     );
+    const { password, ...rest } = user._doc; // Exclude password from the response
+    user = { ...rest, token }; // Add token to the user object
     return res
       .status(200)
       .cookie("token", token, {
@@ -90,15 +96,7 @@ const login = async (req, res) => {
       .json({
         message: `Welcome back ${user.fullname}`,
         success: true,
-        user: {
-          _id: user._id,
-          fullname: user.fullname,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          role: user.role,
-          profile: user.profile,
-        },
-        token,
+        user
       });
   } catch (error) {
     return res.status(400).json({
@@ -129,7 +127,7 @@ const logout = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills } = req.body;
+    const { firstName ,lastName , email, phoneNumber, bio, skills } = req.body;
     const file = req.file;
 
     // Cloudinary
@@ -148,7 +146,8 @@ const updateProfile = async (req, res) => {
       });
     }
     // Updated Data
-    if (fullname) user.fullname = fullname;
+    if (firstName) user.fullname.firstName = firstName;
+    if (lastName) user.fullname.lastName = lastName;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
@@ -158,17 +157,12 @@ const updateProfile = async (req, res) => {
 
     await user.save();
 
+    const {password ,...rest} = user._doc; 
+
     return res.status(200).json({
       message: `Profile Updated SuccessFully`,
       success: true,
-      user: {
-        _id: user._id,
-        fullname: user.fullname,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: user.role,
-        profile: user.profile,
-      },
+     rest
     });
   } catch (error) {
     return res.status(400).json({
@@ -177,7 +171,7 @@ const updateProfile = async (req, res) => {
     });
   }
 };
-const updatePassword = (req,res)=>{
+const updatePassword = async(req,res)=>{
   try {
     const {id} = req.params;
     const { newPassword } = req.body;
