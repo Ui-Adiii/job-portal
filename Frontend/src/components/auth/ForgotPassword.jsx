@@ -105,7 +105,16 @@ const ForgotPassword = () => {
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
-            {loading ? "Changing Password..." : "Change Password"}
+
+{loading ? (
+              <>
+                <Loader2Icon className="animate-spin inline mr-1" />
+                Password Changing..
+              </>
+            ) : (
+              "Forgot Password"
+            )}
+
           </Button>
 
           {showingData && (

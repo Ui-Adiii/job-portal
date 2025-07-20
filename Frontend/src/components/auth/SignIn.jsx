@@ -13,15 +13,21 @@ import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signInFailure, signInStart, signInSuccess } from "@/store/user/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "@/store/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { toggleTheme } from "@/store/theme/themeSlice";
+import { Loader2Icon } from "lucide-react";
 
 const SignIn = () => {
-  const {loading} =useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setformData] = useState({
     role: "",
     email: "",
@@ -36,20 +42,20 @@ const SignIn = () => {
     setformData((prev) => ({ ...prev, role: value }));
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.role || !formData.role ==='') {
+    if (!formData.role || !formData.role === "") {
       dispatch(signInFailure("Please select a role"));
       toast.error("Please select a role");
       return;
     }
-    
+
     dispatch(signInStart());
     try {
-      const response = await axios.post('/api/user/login',formData);      
+      const response = await axios.post("/api/user/login", formData);
       if (response.data.success) {
         dispatch(signInSuccess(response.data.user));
-        navigate('/');
+        navigate("/");
         toast.success("Login successful");
       } else {
         dispatch(signInFailure(response.data.message));
@@ -73,10 +79,9 @@ const SignIn = () => {
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
-             <Link to="/sign-up">
-             
-            <Button variant="link"  >Sign Up</Button>
-             </Link>
+            <Link to="/sign-up">
+              <Button variant="link">Sign Up</Button>
+            </Link>
           </CardAction>
         </CardHeader>
         <CardContent>
@@ -97,7 +102,7 @@ const SignIn = () => {
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                   <Link
-                    to={'/change-password'}
+                    to={"/change-password"}
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
@@ -129,9 +134,16 @@ const SignIn = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
-                      {loading ? "Changing Password..." : "Change Password"}
-                    </Button>
+          <Button type="submit" className={`w-full`} disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2Icon className="animate-spin inline mr-1" />
+                Changing Password..
+              </>
+            ) : (
+              "Change Password"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </form>

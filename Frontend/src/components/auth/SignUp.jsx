@@ -21,7 +21,7 @@ import {
 } from "../../store/user/userSlice";
 import { toast } from "react-toastify";
 const SignUp = () => {
-  const {loading} =useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -152,9 +152,22 @@ const SignUp = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
-                      {loading ? "Changing Password..." : "Change Password"}
-                    </Button>
+          <Button
+            type="submit"
+            className={`w-full ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2Icon className="animate-spin inline mr-1" />
+                Registering..
+              </>
+            ) : (
+              "Register"
+            )}{" "}
+          </Button>
         </CardFooter>
       </Card>
     </form>
