@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "react-toastify";
 const ForgotPassword = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser,loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [pass, setpass] = useState("");
@@ -36,9 +36,12 @@ const ForgotPassword = () => {
     }
   }, [pass, confirmPassword]);
 
+  
   const handleSubmit = async (e) => {
+    dispatch(changePassWordStart());
     e.preventDefault();
     if (pass !== confirmPassword) {
+      dispatch(changePassWordFailure("Passwords do not match"));
       setshowingData("Passwords do not match");
       return;
     }
@@ -48,6 +51,7 @@ const ForgotPassword = () => {
         dispatch(changePassWordSuccess(confirmPassword));
         setshowingData("Password changed successfully");
         toast.success("Password changed successfully");
+        navigator('/');
       } else {
         dispatch(changePassWordFailure(response.data.message));
         setshowingData(response.data.message);
@@ -100,8 +104,8 @@ const ForgotPassword = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Change Password
+          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
+            {loading ? "Changing Password..." : "Change Password"}
           </Button>
 
           {showingData && (

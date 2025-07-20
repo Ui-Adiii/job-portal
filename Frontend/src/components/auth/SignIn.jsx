@@ -14,11 +14,12 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInFailure, signInStart, signInSuccess } from "@/store/user/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const SignIn = () => {
+  const {loading} =useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const [formData, setformData] = useState({
@@ -128,9 +129,9 @@ const SignIn = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
+          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
+                      {loading ? "Changing Password..." : "Change Password"}
+                    </Button>
         </CardFooter>
       </Card>
     </form>

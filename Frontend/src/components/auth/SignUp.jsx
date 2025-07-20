@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 import { Label } from "flowbite-react";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import {
   signInStart,
@@ -21,6 +21,7 @@ import {
 } from "../../store/user/userSlice";
 import { toast } from "react-toastify";
 const SignUp = () => {
+  const {loading} =useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -151,9 +152,9 @@ const SignUp = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Register
-          </Button>
+          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
+                      {loading ? "Changing Password..." : "Change Password"}
+                    </Button>
         </CardFooter>
       </Card>
     </form>
