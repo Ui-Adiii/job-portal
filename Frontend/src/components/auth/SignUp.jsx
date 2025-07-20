@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 import { Label } from "flowbite-react";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import {
   signInStart,
@@ -20,7 +20,6 @@ import {
   signInFailure,
 } from "../../store/user/userSlice";
 const SignUp = () => {
-  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -47,18 +46,16 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/user/register", formData);
-
       console.log(response);
       if (response.data.success) {
         dispatch(signInSuccess(response.data.user));
-        // navigate("/");
+        navigate("/");
       } else {
         dispatch(signInFailure(response.data.message));
       }
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
-    // navigate("/");
   };
 
   return (
