@@ -115,10 +115,10 @@ const getJobById = async (req, res) => {
   }
 };
 
-const getAdminJobs = async (req, res) => {
+const getrecruiterJobs = async (req, res) => {
   try {
-    const adminId = req.id;
-    const jobs = await Job.find({ createdBy: adminId });
+    const recruiterId = req.id;
+    const jobs = await Job.find({ createdBy: recruiterId });
     if (!jobs) {
       return res.json({
         message: "Job not Found",
@@ -137,4 +137,4 @@ const getAdminJobs = async (req, res) => {
   }
 };
 
-export { postJob, getAllJobs, getJobById, getAdminJobs };
+export { postJob, getAllJobs, getJobById, getrecruiterJobs };

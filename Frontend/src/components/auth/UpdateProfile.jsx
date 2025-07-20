@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 const UpdateProfile = () => {
     const { currentUser } = useSelector((state) => state.user);
   const [formData, setformData] = useState({
-    role: "employee",
+    role: "recruiter",
     email: "",
     fullname:"",
     phoneNumber:"",
@@ -115,12 +115,12 @@ const UpdateProfile = () => {
                   onValueChange={handleRoleChange}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="manager" id="r3" />
-                    <Label htmlFor="r3">Manager</Label>
+                    <RadioGroupItem value="employee" id="r3" />
+                    <Label htmlFor="r3">employee</Label>
                   </div>
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="employee" id="r2" />
-                    <Label htmlFor="r2">Employee</Label>
+                    <RadioGroupItem value="recruiter" id="r2" />
+                    <Label htmlFor="r2">recruiter</Label>
                   </div>
                 </RadioGroup>
               </div>

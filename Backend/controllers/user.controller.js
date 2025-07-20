@@ -1,18 +1,48 @@
 import User from "../models/user.model.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
   try {
     const { firstname,lastname, email, phoneNumber, password, role } = req.body;
-    // console.log(req.body);
-    if (!firstname || !lastname  || !email || !phoneNumber || !password || !role) {
+    if (!firstname || !lastname  || !email || !phoneNumber || !password || !role || firstname.trim() === "" || lastname.trim() === "" || email.trim() === "" || phoneNumber === "" || password.trim() === "" || role === "") {
       return res.json({
         message: "Something is missing",
         success: false,
       });
     }
-    
+    if(firstname.length < 3 || lastname.length < 3){
+      return res.json({
+        message: "First name and last name must be at least 3 characters long",
+        success: false,
+      });
+    }
+    if(email.length<7 || email.length>50 || email.includes(" ") || !email.includes("@") || !email.includes(".")){
+      return res.json({
+        message: "Invalid email",
+        success: false,
+      });
+    }
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!strongPasswordRegex.test(password)) {
+      return res.json({
+        message: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+        success: false,
+      });
+    }
+    if (!["recruiter", "employee"].includes(role)) {
+      return res.json({
+        message: "Invalid role",
+        success: false,
+      });
+    }
+    if(phoneNumber.length < 10 || phoneNumber.length > 15 || isNaN(phoneNumber)){
+      return res.json({
+        message: "Invalid phone number",
+        success: false,
+      });
+    }
+
     const existedUser = await User.findOne({ email });
     if (existedUser) {
       return res.json({
@@ -24,7 +54,8 @@ const register = async (req, res) => {
       firstname,
       lastname,
     }
-    const hash = await bcrypt.hash(password, 10);
+    const hash =await bcrypt.hash(password, 10);
+
     const createduser = await User.create({
      fullname,
       email,
@@ -32,7 +63,7 @@ const register = async (req, res) => {
       password: hash,
       role,
     }); 
-    const token = jwt.sign({ id: createduser._id},process.env.JWT_SECRET,{
+    const token = jwt.sign({ userId: createduser._id},process.env.JWT_SECRET,{
       expiresIn: "1d",
     });
     
@@ -60,16 +91,18 @@ const login = async (req, res) => {
         success: false,
       });
     }
-    let user = await User.findOne({ email });
-    if (!user) {
+    
+    let fetcheduser = await User.findOne({ email }).select("+password");
+    
+    if (!fetcheduser) {
       return res.json({
         message: "Incorrect email or password",
         success: false,
       });
     }
-
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-
+   
+    const isPasswordMatch = await bcrypt.compare(password,fetcheduser.password);
+    
     if (!isPasswordMatch) {
       return res.json({
         message: "Incorrect email or password",
@@ -77,7 +110,7 @@ const login = async (req, res) => {
       });
     }
 
-    if (role !== user.role) {
+    if (role !== fetcheduser.role) {
       return res.json({
         message: "Account doesn't exist with current role.",
         success: false,
@@ -86,24 +119,22 @@ const login = async (req, res) => {
 
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: fetcheduser._id,
       },
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",
       }
     );
-    const { password:pass, ...rest } = user._doc; 
-    user = { ...rest, token }; 
-    return 
-    res
+    const { password:pass, ...user } = fetcheduser._doc; 
+    return res
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpsOnly: true,
         sameSite: "strict",
       })
       .json({
-        message: `Welcome back ${user.fullname}`,
+        message: `Welcome back ${user.fullname.firstname}`,
         success: true,
         user
       });
@@ -180,33 +211,57 @@ const updateProfile = async (req, res) => {
   }
 };
 const updatePassword = async(req,res)=>{
-  try {
-    const {id} = req.params;
-    const { newPassword } = req.body;
-    if ( !newPassword) {
+  try {    
+    const {id} = req.params;    
+    const { confirmPassword } = req.body;
+    if ( !confirmPassword || confirmPassword.trim() ==='') {
       return res.json({
         message: "Something is missing",
         success: false,
       });
     }
-    const user = User.findById(id);
+    
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
+    if(!strongPasswordRegex.test(confirmPassword)) {
+      return res.json({
+        message: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+        success: false,
+      });
+    }
+    const user =await User.findById(id).select("+password");
+    
     if (!user) {
       return res.json({
         message: "user not found",
         success: false,
       });
     }
-    const hash = bcrypt.hash(password, 10);
-    user.password = hash;
+    const checkHash = await bcrypt.compare(confirmPassword, user.password);
+    
+    if(checkHash){
+       return res.json({
+        message: "Don't gave old password",
+        success: false,
+      });
+    }
+
+    const hash = await bcrypt.hash(confirmPassword, 10);
+    if (!hash) {
+      return res.json({
+        message: "Failed to hash password",
+        success: false,
+      });
+    }
     const updatedUser = await User.findByIdAndUpdate(id, { password: hash }, { new: true });
-    const { password, ...rest}= updatedUser._doc;
     if (!updatedUser) {
       return res.json({
         message: "Failed to update password",
         success: false,
       });
     }
-
+    
+    const { password:hashed, ...rest}= updatedUser._doc;
     return res.json({
       message: "Password updated successfully",
       success: true,

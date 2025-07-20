@@ -19,6 +19,7 @@ import {
   signInSuccess,
   signInFailure,
 } from "../../store/user/userSlice";
+import { toast } from "react-toastify";
 const SignUp = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const SignUp = () => {
     email: "",
     phoneNumber: "",
     password: "",
-    role: "employee",
+    role: "recruiter",
   });
 
   const handleChange = (e) => {
@@ -46,15 +47,17 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/user/register", formData);
-      console.log(response);
       if (response.data.success) {
         dispatch(signInSuccess(response.data.user));
         navigate("/");
+        toast.success("Registration successful");
       } else {
         dispatch(signInFailure(response.data.message));
+        toast.error(response.data.message);
       }
     } catch (error) {
       dispatch(signInFailure(error.message));
+      toast.error(error.message);
     }
   };
 
@@ -135,12 +138,12 @@ const SignUp = () => {
                   onValueChange={handleRoleChange}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="manager" id="r3" />
-                    <Label htmlFor="r3">Manager</Label>
+                    <RadioGroupItem value="employee" id="r3" />
+                    <Label htmlFor="r3">employee</Label>
                   </div>
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="employee" id="r2" />
-                    <Label htmlFor="r2">Employee</Label>
+                    <RadioGroupItem value="recruiter" id="r2" />
+                    <Label htmlFor="r2">recruiter</Label>
                   </div>
                 </RadioGroup>
               </div>

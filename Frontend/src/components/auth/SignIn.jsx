@@ -13,12 +13,16 @@ import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { signInFailure, signInStart, signInSuccess } from "@/store/user/userSlice";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate()
   const [formData, setformData] = useState({
-    role: "employee",
+    role: "",
     email: "",
     password: "",
   });
@@ -31,10 +35,29 @@ const SignIn = () => {
     setformData((prev) => ({ ...prev, role: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    if (!formData.role || !formData.role ==='') {
+      dispatch(signInFailure("Please select a role"));
+      toast.error("Please select a role");
+      return;
+    }
     
-    navigate('/');
+    dispatch(signInStart());
+    try {
+      const response = await axios.post('/api/user/login',formData);      
+      if (response.data.success) {
+        dispatch(signInSuccess(response.data.user));
+        navigate('/');
+        toast.success("Login successful");
+      } else {
+        dispatch(signInFailure(response.data.message));
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      dispatch(signInFailure(error.message));
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -92,12 +115,12 @@ const SignIn = () => {
                   onValueChange={handleRoleChange}
                 >
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="manager" id="r3" />
-                    <Label htmlFor="r3">Manager</Label>
+                    <RadioGroupItem value="employee" id="r3" />
+                    <Label htmlFor="r3">employee</Label>
                   </div>
                   <div className="flex items-center gap-3">
-                    <RadioGroupItem value="employee" id="r2" />
-                    <Label htmlFor="r2">Employee</Label>
+                    <RadioGroupItem value="recruiter" id="r2" />
+                    <Label htmlFor="r2">recruiter</Label>
                   </div>
                 </RadioGroup>
               </div>
