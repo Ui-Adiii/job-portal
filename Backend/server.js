@@ -16,13 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://localhost:5173",
-    credentials: true,
   })
 );
 
 app.get("/", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
     message: "API Working",
   });
@@ -31,9 +29,9 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 //api call
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/company", companyRoute);
-app.use("/api/v1/job", jobRoute);
+app.use("/api/user", userRouter);
+app.use("/api/company", companyRoute);
+app.use("/api/job", jobRoute);
 
 
 app.listen(PORT, () => {

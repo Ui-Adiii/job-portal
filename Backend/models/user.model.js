@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   fullname: {
-    firstName:{
+    firstname:{
       type: String,
       required: true,
     },
-    lastName:{
+    lastname:{
       type: String,
       required: true,
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "employee"],
+    enum: ["manager", "employee"],
     required: true,
   },
   profile: {
@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
       type: String
     },
     company: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Company'
     },
     profilePhoto: {

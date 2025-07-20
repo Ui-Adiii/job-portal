@@ -13,47 +13,51 @@ import { Label } from "flowbite-react";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 import {
   signInStart,
   signInSuccess,
   signInFailure,
 } from "../../store/user/userSlice";
-
 const SignUp = () => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [formData, setformData] = useState({
-    role: "employee",
+    firstname: "",
+    lastname: "",
     email: "",
-    fullname: {
-      firstname: "",
-      lastname: "",
-    },
     phoneNumber: "",
     password: "",
+    role: "employee",
   });
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    if (id === "firstname" || id === "lastname") {
-      setformData((prev) => ({
-        ...prev,
-        fullname: { ...prev.fullname, [id]: value },
-      }));
-    } else {
-      setformData((prev) => ({ ...prev, [id]: value }));
-    }
+    setformData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleRoleChange = (value) => {
     setformData((prev) => ({ ...prev, role: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    dispatch(signInStart());
     e.preventDefault();
-    dispatch(signInSuccess(formData));
-    console.log(formData);
+    try {
+      const response = await axios.post("/api/user/register", formData);
+
+      console.log(response);
+      if (response.data.success) {
+        dispatch(signInSuccess(response.data.user));
+        // navigate("/");
+      } else {
+        dispatch(signInFailure(response.data.message));
+      }
+    } catch (error) {
+      dispatch(signInFailure(error.message));
+    }
     // navigate("/");
   };
 
@@ -78,7 +82,7 @@ const SignUp = () => {
                 <Label htmlFor="firstname">First Name</Label>
                 <Input
                   onChange={handleChange}
-                  value={formData.fullname.firstname}
+                  value={formData.firstname}
                   id="firstname"
                   type="name"
                   placeholder="Aditya"
@@ -87,7 +91,7 @@ const SignUp = () => {
                 <Label htmlFor="lastname">Last Name</Label>
                 <Input
                   onChange={handleChange}
-                  value={formData.fullname.lastname}
+                  value={formData.lastname}
                   id="lastname"
                   type="name"
                   placeholder="Mallick"

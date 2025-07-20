@@ -4,38 +4,47 @@ import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
   try {
-    const { firstName,lastName, email, phoneNumber, password, role } = req.body;
-    if (!firstName || !lastName  || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({
+    const { firstname,lastname, email, phoneNumber, password, role } = req.body;
+    // console.log(req.body);
+    if (!firstname || !lastname  || !email || !phoneNumber || !password || !role) {
+      return res.json({
         message: "Something is missing",
         success: false,
       });
     }
+    
     const existedUser = await User.findOne({ email });
     if (existedUser) {
-      return res.status(400).json({
+      return res.json({
         message: "user already exist",
         success: false,
       });
     }
+    const fullname = {
+      firstname,
+      lastname,
+    }
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      fullname:{
-        firstName,
-        lastName,
-      },
+    const createduser = await User.create({
+     fullname,
       email,
       phoneNumber,
       password: hash,
       role,
+    }); 
+    const token = jwt.sign({ id: createduser._id},process.env.JWT_SECRET,{
+      expiresIn: "1d",
     });
-    res.status(201).json({
+    
+   const { password: pass, ...user } = createduser._doc; 
+    res.json({
       message: "registered successfully",
       success: true,
       user,
+      token,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -46,14 +55,14 @@ const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
     if (!email || !password || !role) {
-      return res.status(400).json({
+      return res.json({
         message: "Something is missing",
         success: false,
       });
     }
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({
+      return res.json({
         message: "Incorrect email or password",
         success: false,
       });
@@ -62,14 +71,14 @@ const login = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-      return res.status(400).json({
+      return res.json({
         message: "Incorrect email or password",
         success: false,
       });
     }
 
     if (role !== user.role) {
-      return res.status(400).json({
+      return res.json({
         message: "Account doesn't exist with current role.",
         success: false,
       });
@@ -84,10 +93,10 @@ const login = async (req, res) => {
         expiresIn: "1d",
       }
     );
-    const { password, ...rest } = user._doc; // Exclude password from the response
-    user = { ...rest, token }; // Add token to the user object
-    return res
-      .status(200)
+    const { password:pass, ...rest } = user._doc; 
+    user = { ...rest, token }; 
+    return 
+    res
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpsOnly: true,
@@ -99,7 +108,7 @@ const login = async (req, res) => {
         user
       });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -109,7 +118,6 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   try {
     return res
-      .status(200)
       .cookie("token", "", {
         maxAge: 0,
       })
@@ -118,7 +126,7 @@ const logout = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -140,7 +148,7 @@ const updateProfile = async (req, res) => {
     const userId = req.id;
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(400).json({
+      return res.json({
         message: "user not found",
         success: false,
       });
@@ -159,13 +167,13 @@ const updateProfile = async (req, res) => {
 
     const {password ,...rest} = user._doc; 
 
-    return res.status(200).json({
+    return res.json({
       message: `Profile Updated SuccessFully`,
       success: true,
      rest
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -176,14 +184,14 @@ const updatePassword = async(req,res)=>{
     const {id} = req.params;
     const { newPassword } = req.body;
     if ( !newPassword) {
-      return res.status(400).json({
+      return res.json({
         message: "Something is missing",
         success: false,
       });
     }
     const user = User.findById(id);
     if (!user) {
-      return res.status(400).json({
+      return res.json({
         message: "user not found",
         success: false,
       });
@@ -193,19 +201,19 @@ const updatePassword = async(req,res)=>{
     const updatedUser = await User.findByIdAndUpdate(id, { password: hash }, { new: true });
     const { password, ...rest}= updatedUser._doc;
     if (!updatedUser) {
-      return res.status(400).json({
+      return res.json({
         message: "Failed to update password",
         success: false,
       });
     }
 
-    return res.status(200).json({
+    return res.json({
       message: "Password updated successfully",
       success: true,
       rest,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });

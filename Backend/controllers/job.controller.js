@@ -27,7 +27,7 @@ const postJob = async (req, res) => {
       !position ||
       !company
     ) {
-      return res.status(400).json({
+      return res.json({
         message: "Something is missing",
         success: false,
       });
@@ -44,13 +44,13 @@ const postJob = async (req, res) => {
       company,
       createdBy: userId,
     });
-    return res.status(201).json({
+    return res.json({
       message: "Job created successfully",
       success: true,
       job
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -73,18 +73,18 @@ const getAllJobs = async (req, res) => {
     }).sort({createdAt: -1});
 
     if (!jobs) {
-      return res.status(400).json({
+      return res.json({
         message: "Job not Found",
         success: false,
       });
     }
 
-    return res.status(200).json({
+    return res.json({
       jobs,
       success: true,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -97,18 +97,18 @@ const getJobById = async (req, res) => {
     const job = await Job.findById(jobId);
 
     if (!job) {
-      return res.status(400).json({
+      return res.json({
         message: "Job not Found",
         success: false,
       });
     }
 
-    return res.status(200).json({
+    return res.json({
       job,
       success: true,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
@@ -120,17 +120,17 @@ const getAdminJobs = async (req, res) => {
     const adminId = req.id;
     const jobs = await Job.find({ createdBy: adminId });
     if (!jobs) {
-      return res.status(400).json({
+      return res.json({
         message: "Job not Found",
         success: false,
       });
     }
-    return res.status(200).json({
+    return res.json({
       jobs,
       success: true,
     });
   } catch (error) {
-    return res.status(400).json({
+    return res.json({
       message: error.message,
       success: false,
     });
