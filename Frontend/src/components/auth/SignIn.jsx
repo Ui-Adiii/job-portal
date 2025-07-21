@@ -53,6 +53,7 @@ const SignIn = () => {
     dispatch(signInStart());
     try {
       const response = await axios.post("/api/user/login", formData);
+
       if (response.data.success) {
         dispatch(signInSuccess(response.data.user));
         navigate("/");
@@ -136,13 +137,11 @@ const SignIn = () => {
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className={`w-full`} disabled={loading}>
             {loading ? (
-              <>
-                <Loader2Icon className="animate-spin inline mr-1" />
-                Changing Password..
-              </>
+              <Loader2Icon className="animate-spin inline mr-1" />
             ) : (
-              "Change Password"
+              ""
             )}
+            Login
           </Button>
         </CardFooter>
       </Card>

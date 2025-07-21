@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "react-toastify";
 const ForgotPassword = () => {
-  const { currentUser,loading } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [pass, setpass] = useState("");
@@ -36,7 +36,6 @@ const ForgotPassword = () => {
     }
   }, [pass, confirmPassword]);
 
-  
   const handleSubmit = async (e) => {
     dispatch(changePassWordStart());
     e.preventDefault();
@@ -45,18 +44,21 @@ const ForgotPassword = () => {
       setshowingData("Passwords do not match");
       return;
     }
-    try {      
-      const response = await axios.put(`/api/user/profile/password/${currentUser._id}`,{confirmPassword});
+    try {
+      const response = await axios.put(
+        `/api/user/profile/password/${currentUser._id}`,
+        { confirmPassword }
+      );
       if (response.data.success) {
         dispatch(changePassWordSuccess(confirmPassword));
         setshowingData("Password changed successfully");
         toast.success("Password changed successfully");
-        navigator('/');
+        navigator("/");
       } else {
         dispatch(changePassWordFailure(response.data.message));
         setshowingData(response.data.message);
         toast.error(response.data.message);
-      }      
+      }
     } catch (error) {
       dispatch(changePassWordFailure(error.message));
       setshowingData("Error changing password");
@@ -104,17 +106,19 @@ const ForgotPassword = () => {
           </div>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className={`w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`} disabled={loading}>
-
-{loading ? (
-              <>
-                <Loader2Icon className="animate-spin inline mr-1" />
-                Password Changing..
-              </>
+          <Button
+            type="submit"
+            className={`w-full ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2Icon className="animate-spin inline mr-1" />
             ) : (
-              "Forgot Password"
+              ""
             )}
-
+            Forget Password
           </Button>
 
           {showingData && (

@@ -20,6 +20,7 @@ import {
   signInFailure,
 } from "../../store/user/userSlice";
 import { toast } from "react-toastify";
+import { Loader2Icon } from "lucide-react";
 const SignUp = () => {
   const { loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -160,13 +161,11 @@ const SignUp = () => {
             disabled={loading}
           >
             {loading ? (
-              <>
-                <Loader2Icon className="animate-spin inline mr-1" />
-                Registering..
-              </>
+              <Loader2Icon className="animate-spin inline mr-1" />
             ) : (
-              "Register"
-            )}{" "}
+              ""
+            )}
+            Register
           </Button>
         </CardFooter>
       </Card>

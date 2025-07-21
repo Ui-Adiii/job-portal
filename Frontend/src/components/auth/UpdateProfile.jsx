@@ -54,12 +54,7 @@ const UpdateProfile = () => {
     >
       <Card className="w-full  max-w-lg">
         <CardHeader >
-          <CardTitle>Register for your account</CardTitle>
-          <CardAction>
-            <Link to="/sign-in">
-              <Button variant="link">Update Profile</Button>
-            </Link>
-          </CardAction>
+          <CardTitle>Update for your account</CardTitle>
         </CardHeader>
         <CardContent>
           <div>
@@ -98,18 +93,6 @@ const UpdateProfile = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input
-                  onChange={handleChange}
-                  value={formData.password}
-                  id="password"
-                  type="password"
-                  placeholder="*******"
-                  required
-                />
-
                 <RadioGroup
                   value={formData.role}
                   onValueChange={handleRoleChange}
@@ -129,7 +112,7 @@ const UpdateProfile = () => {
         </CardContent>
         <CardFooter className="flex-col gap-2">
           <Button type="submit" className="w-full">
-            Register
+            Update
           </Button>
         </CardFooter>
       </Card>
