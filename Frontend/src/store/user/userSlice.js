@@ -84,6 +84,8 @@ export const {
     signInFailure,
     signInSuccess,
     updateSuccess,
+    updateFailure,
+    updateStart,
     deleteStart,
     deleteFailure,
     deleteSuccess,

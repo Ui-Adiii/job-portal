@@ -5,7 +5,11 @@ import cookieParser from 'cookie-parser'
 import connectDB from './utils/db.js'
 import userRouter from './routes/user.route.js'
 import companyRoute from "./routes/company.route.js";
-import jobRoute from "./routes/job.route.js";
+import jobRoute from "./routes/job.route.js"
+import connectCloudinary from "./utils/cloudinary.js";
+
+
+connectCloudinary();
 
 dotenv.config({});
 const app = express();

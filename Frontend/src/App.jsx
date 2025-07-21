@@ -8,6 +8,7 @@ import SignUp from "./components/auth/SignUp";
 import PrivateRoute from "./components/customs/PrivateRoute";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import UpdateProfile from "./components/auth/UpdateProfile";
+import Profile from "./pages/Profile";
 const App = () => {
   return (
     <BrowserRouter>
@@ -20,6 +21,7 @@ const App = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/change-password" element={<ForgotPassword />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
 
 const register = async (req, res) => {
   try {
@@ -166,10 +167,15 @@ const logout = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const { firstName ,lastName , email, phoneNumber, bio, skills } = req.body;
+    const { firstname ,lastname , email, phoneNumber, bio, skills } = req.body;
     const file = req.file;
 
-    // Cloudinary
+    let result;
+    if (file) {
+      result = await cloudinary.uploader.upload(file.path, {
+        resource_type: "image",
+      });
+    }
 
     let skillsArray; 
     if (skills) {
@@ -185,13 +191,13 @@ const updateProfile = async (req, res) => {
       });
     }
     // Updated Data
-    if (firstName) user.fullname.firstName = firstName;
-    if (lastName) user.fullname.lastName = lastName;
+    if (firstname) user.fullname.firstname = firstname;
+    if (lastname) user.fullname.lastname = lastname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skillsArray;
-
+    if(result)  user.profile.profilePhoto = result.secure_url;
     // resume
 
     await user.save();
