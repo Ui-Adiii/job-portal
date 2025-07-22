@@ -8,7 +8,8 @@ import SignUp from "./components/auth/SignUp";
 import PrivateRoute from "./components/customs/PrivateRoute";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import UpdateProfile from "./components/auth/UpdateProfile";
-import Profile from "./pages/Profile";
+import DashBoard from "./components/dashboard/DashBoard";
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -21,7 +22,7 @@ const App = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/change-password" element={<ForgotPassword />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<DashBoard />} />
         </Route>
       </Routes>
     </BrowserRouter>

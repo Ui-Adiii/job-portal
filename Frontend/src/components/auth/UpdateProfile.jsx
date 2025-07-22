@@ -110,7 +110,7 @@ const UpdateProfile = () => {
   };
   return (
     <form
-      className="flex justify-center items-center min-h-screen"
+      className="flex justify-center items-center min-h-screen w-full"
       onSubmit={handleSubmit}
     >
       <Card className="w-full  max-w-sm">

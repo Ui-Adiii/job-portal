@@ -1,5 +1,5 @@
 import Job from "../models/job.model.js";
-
+import User from "../models/user.model.js";
 const postJob = async (req, res) => {
   try {
     const {
@@ -15,6 +15,19 @@ const postJob = async (req, res) => {
     } = req.body;
 
     const userId = req.id;
+    const user = await User.findById(userId);
+    if(!user) {
+      return res.json({
+        message: "User not found",
+        success: false,
+      });
+    }
+    if(user.role !== "recruiter") {
+      return res.json({
+        message: "You are not authorized to post a job",
+        success: false,
+      });
+    }
     if (
       !title ||
       !description ||
@@ -136,5 +149,6 @@ const getrecruiterJobs = async (req, res) => {
     });
   }
 };
+
 
 export { postJob, getAllJobs, getJobById, getrecruiterJobs };
