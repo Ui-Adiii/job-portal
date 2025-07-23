@@ -11,14 +11,14 @@ import { toast } from "react-toastify";
 
 const AddCompany = () => {
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser ,loading} = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     location: "",
+    password:""
   });
   const [logo, setLogo] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -28,8 +28,11 @@ const AddCompany = () => {
   };
 
   const handleFileChange = (e) => {
+    
     setLogo(e.target.files[0]);
+    console.log(e.target.files[0]);
   };
+  console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,18 +42,15 @@ const AddCompany = () => {
     data.append("name", formData.name);
     data.append("description", formData.description);
     data.append("location", formData.location);
+    data.append("password", formData.password);
     data.append("logo", logo);
-
     try {
-      setLoading(true);
       const res = await axios.post("/api/company/add", data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${currentUser?.token}`,
         },
       });
 
-      setLoading(false);
 
       if (res.data.success) {
         toast.success(res.data.message);
@@ -59,7 +59,6 @@ const AddCompany = () => {
         toast.error(res.data.message || "Company creation failed");
       }
     } catch (err) {
-      setLoading(false);
       toast.error(err.response?.data?.message || err.message || "Something went wrong");
     }
   };
@@ -97,6 +96,10 @@ const AddCompany = () => {
           <div className="grid gap-2">
             <Label htmlFor="logo">Company Logo</Label>
             <Input id="logo" type="file" accept="image/*" onChange={handleFileChange} required />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type={"password"} value={formData.password} onChange={handleChange} required />
           </div>
         </CardContent>
         <CardFooter>
