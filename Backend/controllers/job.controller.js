@@ -29,26 +29,33 @@ const postJob = async (req, res) => {
       });
     }
     if (
-      !title ||
-      !description ||
-      !description ||
-      !requirements ||
-      !salary ||
-      !location ||
-      !jobType ||
-      !experience ||
+      !title ||  title.trim() === "" ||
+      !description || description.trim() === "" ||
+      !requirements || requirements.length === 0 || 
+      !salary ||  salary === "" ||
+      !location || location.trim() === "" ||
+
+      !jobType || jobType.trim() === "" ||
+       !experience ||
       !position ||
-      !company
+      !company 
     ) {
       return res.json({
         message: "Something is missing",
         success: false,
       });
     }
+    const existingJob = await Job.findOne({ title, createdBy: userId });
+    if (existingJob) {
+      return res.json({
+        message: "You have already posted a job with this title",
+        success: false,
+      });
+    }
     const job = await Job.create({
       title,
       description,
-      requirements: requirements.split(","),
+      requirements,
       salary: Number(salary),
       location,
       jobType,
