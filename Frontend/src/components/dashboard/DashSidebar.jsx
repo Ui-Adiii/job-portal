@@ -8,11 +8,10 @@ import {
 import {
   HiUser,
   HiArrowSmRight,
-  HiDocumentText,
-  HiOutlineUserGroup,
-  HiAnnotation,
-  HiChartPie,
+ 
 } from "react-icons/hi";
+import { LuCirclePlus } from "react-icons/lu";
+
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -54,14 +53,25 @@ const DashSidebar = () => {
   };
 
   return (
-    <Sidebar className="w-full h-screen md:w-56">
+    <Sidebar className="w-full md:w-56 ">
       <SidebarItems>
         <SidebarItemGroup className="flex flex-col gap-1">
-          <Link to="/dashboard?tab=update-profile">
-            <SidebarItem icon={HiUser} as="div">
+          <Link to="/dashboard?tab=update-profile"> 
+            <SidebarItem icon={HiUser}  as="div">
               Dashboard
             </SidebarItem>
           </Link>
+          <Link to="/dashboard?tab=post-job"> 
+            <SidebarItem icon={LuCirclePlus}  as="div">
+              Post Job
+            </SidebarItem>
+          </Link>
+          <Link to="/dashboard?tab=add-company"> 
+            <SidebarItem icon={LuCirclePlus}  as="div">
+             Add Company
+            </SidebarItem>
+          </Link>
+         
 
           <SidebarItem
             icon={HiArrowSmRight}

@@ -1,11 +1,33 @@
-import Company from "../models/comany.model.js";
-
+import Company from "../models/company.model.js";
+import User from "../models/user.model.js";
+import bcrypt from "bcrypt";
 const registerCompany = async (req, res) => {
   try {
-    const { companyName } = req.body;
+    const userId = req.id;
+    const user = await User.findById(userId).select('+password');
+    if(!user) {
+      return res.json({
+        message: "User not found",
+        success: false,
+      });
+    }
+    const { companyName ,password} = req.body;
+    const isPasswordMatch = await bcrypt.compare(password,user.password);
+    if(!isPasswordMatch){
+      return res.json({
+        message: "Incorrect password",
+        success: false,
+      });
+    }
     if (!companyName) {
       return res.json({
         message: "CompanyName is required",
+        success: false,
+      });
+    }
+    if (!password) {
+      return res.json({
+        message: "Password is required",
         success: false,
       });
     }
@@ -16,10 +38,13 @@ const registerCompany = async (req, res) => {
         success: false,
       });
     }
+    
     company = await Company.create({
-      userId: req.id,
+      userId,
       name: companyName,
     });
+    user.profile.company=company._id;
+    await user.save();
     return res.json({
       message: "Company registered SuccessFully",
       success: true,
