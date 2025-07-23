@@ -4,12 +4,13 @@ import {
   getCompany,
   getCompanyById,
   updateCompany,
-} from "../controllers/compay.controller.js";
+} from "../controllers/company.controller.js";
 import userAuth from "../middlewares/user.auth.middleware.js";
+import upload from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
-router.post("/register",userAuth,  registerCompany);
+router.post("/add", upload.single('logo'),userAuth,  registerCompany);
 router.get("/get",userAuth, getCompany);
 router.get("/get/:id", userAuth,getCompanyById);
 router.put("/update/:id",userAuth, updateCompany);

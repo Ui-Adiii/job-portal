@@ -32,7 +32,7 @@ const SignUp = () => {
     email: "",
     phoneNumber: "",
     password: "",
-    role: "recruiter",
+    role: "employee",
   });
 
   const handleChange = (e) => {

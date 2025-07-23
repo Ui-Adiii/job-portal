@@ -1,9 +1,14 @@
 import Company from "../models/company.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import { v2 as cloudinary } from "cloudinary";
+
+
+
 const registerCompany = async (req, res) => {
   try {
     const userId = req.id;
+
     const user = await User.findById(userId).select('+password');
     if(!user) {
       return res.json({
@@ -11,7 +16,8 @@ const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    const { companyName ,password} = req.body;
+    const logo = req.file;
+    const { name ,password , description ,website ,location } = req.body;
     const isPasswordMatch = await bcrypt.compare(password,user.password);
     if(!isPasswordMatch){
       return res.json({
@@ -19,9 +25,19 @@ const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    if (!companyName) {
+    let result;
+    if (logo) {
+      result = await cloudinary.uploader.upload(logo.path, {
+        resource_type: "image",
+      });
+    }
+   
+    if (
+      !name || name.trim() === "" || 
+    !description || description.trim() === "" ||
+    !location || location.trim() === "" ) {
       return res.json({
-        message: "CompanyName is required",
+        message: "Some fields are missing",
         success: false,
       });
     }
@@ -31,17 +47,21 @@ const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    let company = await Company.findOne({ name: companyName });
+    let company = await Company.findOne({ name });
     if (company) {
       return res.json({
         message: "You can't Register same company",
         success: false,
       });
     }
-    
+  
     company = await Company.create({
       userId,
-      name: companyName,
+      name,
+      description,
+      website,
+      location,
+      logo:result.secure_url
     });
     user.profile.company=company._id;
     await user.save();
